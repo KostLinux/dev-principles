@@ -123,13 +123,55 @@ const MAX_LENGTH = 10
 const MIN_PASSWORD_LENGTH = 8
 ```
 
+### Packages
+
+Go package names should be short and contain only lowercase letters. A package name composed of multiple words should be left unbroken in all lowercase. For example, the package tabwriter is not named `tabWriter`, `TabWriter`, or `tab_writer`. Additionally the packages must be self-explanative and should not be named `common`, `utils`, `helpers`, etc.
+
+To avoid the code duplication, functions inside the packages must not be named the same as the package name.
+
+**Good Example:**
+
+```go
+package user
+
+func GetByID(id int) (*User, error) {
+    // Implementation
+}
+```
+
+```go
+package main
+
+import "github.com/username/project/user"
+
+func main() {
+    user.GetByID(1)
+}
+```
+
+**Bad Example:**
+
+```go
+package user
+
+func GetUserByID(id int) (*User, error) {
+    // Implementation
+}
+```
+
+```go
+package main
+
+import "github.com/username/project/user"
+
+func main() {
+    user.GetUserByID(1)
+}
+```
+
 ---
 
 ## Code Structure
-
-### Packages:
-
-Go package names should be short and contain only lowercase letters. A package name composed of multiple words should be left unbroken in all lowercase. For example, the package tabwriter is not named `tabWriter`, `TabWriter`, or `tab_writer`
 
 ### File Naming:
 
