@@ -882,7 +882,8 @@ func (us *UserService) StoreUser(name string) {
 
 Now, UserService depends on the Storage interface, so you can easily replace Database with another implementation.
 
-Recap
+### Recap
+
 SRP: One responsibility per module.
 OCP: Add new features without modifying existing code.
 LSP: Subtypes should behave as their base type expects.
