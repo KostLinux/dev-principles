@@ -929,7 +929,7 @@ Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to ma
 **Good Example:**
 
 ```
-feat: add user registration endpoint
+feature: add user registration endpoint
 ```
 
 **Bad Example:**
