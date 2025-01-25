@@ -938,6 +938,45 @@ feat: add user registration endpoint
 Added new feature
 ```
 
+# Observability
+
+## Logging
+
+### Logger Middleware
+
+Logger Middleware is an important part of the application to log incoming and outgoing requests and responses.
+
+Logger middleware **must** have the following parameters:
+
+- Request method
+- Request uri
+- Request latency till it reaches the outgoing server
+- Request Round-Trip Time (RTT)
+- `X-Request-ID` header which is added to trace the request
+- Response status code
+
+These parameters are going under **MUST** category because they are essential for debugging and monitoring the application.
+
+Logger middleware **should** have the following parameters:
+
+- Request body with sanitization of sensitive data
+- Response body with sanitization of sensitive data
+- Request headers
+- Response headers
+- Custom fields like user ID, request ID, etc.
+
+Add a logger middleware to log incoming requests and responses. 
+
+### Log Levels
+
+Log levels must be used to categorize log messages based on their severity. The following log levels are recommended:
+
+- **DEBUG**: Detailed information, typically of interest only when diagnosing problems.
+- **INFO**: Confirmation that things are working as expected.
+- **WARN**: An indication that something unexpected happened, or indicative of some problem in the near future (e.g., disk space low). The software is still working as expected.
+- **ERROR**: Due to a more serious problem, the software has not been able to perform some function.
+- **FATAL**: A critical error that results in the application being unable to function.
+
 # Conclusion
 
 By following these coding conventions and best practices, we aim to maintain a high standard of code quality, readability, and maintainability across the project. 
