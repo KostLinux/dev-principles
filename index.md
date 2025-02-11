@@ -1072,13 +1072,9 @@ return re.MatchString(email)
 
 func validateEmail(email string) {
 if !isValidEmail(email) {
-log.Printf(err)
+log.Printf(err) // missing error's type
 }
 ```
-
-
-
-
 
 # Conclusion
 
