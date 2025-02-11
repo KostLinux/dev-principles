@@ -979,6 +979,8 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 ## Logging types
 
+Logging errors properly is crucial for debugging, monitoring, and maintaining an application. By categorizing logs into specific types, we can quickly identify where the issue occurred and what caused it. Below are the key logging types and why they should be used.
+
 - **DatabaseError** - Logs errors related to database transactions, such as connection failures, query timeouts, or integrity violations.
 - **QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
 - **ValidationError** - HTTP Request and Response validation error
