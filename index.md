@@ -979,12 +979,106 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 ## Logging types
 
-**DatabaseError** - Database Operations
-**QueueError** - Queue Operations
+**DatabaseError** - Logs errors related to database transactions, such as connection failures, query timeouts, or integrity violations.
+
+**Good Example:**
+
+```
+_, err := db.Exec("DROP TABLE users")
+if err != nil {
+log.Printf("DatabaseError: %v", err)
+}
+```
+
+```
+_, err := db.Exec("SELECT * FROM non_existing_table")
+if err != nil {
+log.Printf("DatabaseError: %v", err)
+}
+```
+
+**QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
+
+**Good Example:**
+
+```
+svc := sqs.New(session.Must(session.NewSession()))
+_, err := svc.GetQueueUrl(&sqs.GetQueueUrlInput{
+QueueName: aws.String("my-queue"),
+})
+if err != nil {
+log.Printf("QueueError: %v", err)
+}
+```
+
 **ValidationError** - HTTP Request and Response validation error
-**ServerError** - Internal Application Error
-**ClientError** - Frontend Application Error
-**InternalCommunicationError** - HTTP errors for internal communication between services
+
+**Good Example:**
+
+```
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf("ValidationError: Invalid email format: %s", email)
+}
+```
+
+**ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
+
+**Good Example:**
+
+```
+func main() {
+err := startServer()
+if err != nil {
+log.Fatalf("ServerError: %v", err)
+}
+```
+
+**ClientError** - Frontend Application Error: Logs errors caused by incorrect API requests or missing fields from the client.
+
+**Good Example:**
+
+```
+func isValidEmail(email string) bool {
+re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+return re.MatchString(email)
+}
+
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf("ClientError: Invalid email format received from client: %s", email)
+}
+```
+
+**InternalCommunicationError** - HTTP errors for internal communication between services; logs failures when making HTTP calls between microservices.
+
+**Good Example:**
+
+```
+var err error
+DB, err = database.NewDBConnection()
+if err != nil {
+log.Printf("InternalCommunicationError: %v", err)
+}
+```
+
+**Bad Examples:**
+
+```
+func isValidEmail(email string) bool {
+re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+return re.MatchString(email)
+}
+
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf(err)
+}
+```
+
+
+
+
 
 # Conclusion
 
