@@ -979,8 +979,6 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 ## Logging types
 
-### error.type
-
 **DatabaseError** - Database Operations
 **QueueError** - Queue Operations
 **ValidationError** - HTTP Request and Response validation error
