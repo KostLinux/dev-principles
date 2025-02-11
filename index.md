@@ -977,6 +977,16 @@ Log levels must be used to categorize log messages based on their severity. The 
 - **ERROR**: Due to a more serious problem, the software has not been able to perform some function.
 - **FATAL**: A critical error that results in the application being unable to function.
 
+## Logging types
+
+### error.type
+
+**DatabaseError** - Database Operations
+**QueueError** - Queue Operations
+**ValidationError** - HTTP Request and Response validation error
+**ServerError** - Internal Application Error
+**InternalCommunicationError** - HTTP errors for internal communication between services
+
 # Conclusion
 
 By following these coding conventions and best practices, we aim to maintain a high standard of code quality, readability, and maintainability across the project. 
