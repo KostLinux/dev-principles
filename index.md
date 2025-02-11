@@ -985,6 +985,7 @@ Log levels must be used to categorize log messages based on their severity. The 
 **QueueError** - Queue Operations
 **ValidationError** - HTTP Request and Response validation error
 **ServerError** - Internal Application Error
+**ClientError** - Frontend Application Error
 **InternalCommunicationError** - HTTP errors for internal communication between services
 
 # Conclusion
