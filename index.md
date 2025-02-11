@@ -981,19 +981,19 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 Logging errors properly is crucial for debugging, monitoring, and maintaining an application. By categorizing logs into specific types, we can quickly identify where the issue occurred and what caused it. Below are the key logging types and why they should be used.
 
-- **DatabaseError** - Logs errors related to database transactions, such as connection failures, query timeouts, or integrity violations.
+- **DatabaseError** - Logs errors related to database transactions, query timeouts, or integrity violations.
 - **QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
-- **ValidationError** - HTTP Request and Response validation error
+- **ValidationError** - Any validation error
 - **ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
-- **ClientError** - Frontend Application Error: Logs errors caused by incorrect API requests or missing fields from the client.
-- **InternalCommunicationError** - HTTP errors for internal communication between services; logs failures when making HTTP calls between microservices.
+- **ClientError** - Frontend Application Error: Errors caused by incorrect API requests or missing fields from the client.
+- **InternalCommunicationError** - Errors related to internal communication between microservices and backend services. This includes failures in HTTP, TCP, and UDP connections, as well as issues communicating with databases, message queues, external APIs, DNS resolution, and other infrastructure components.
 
 **Good Example:**
 
 ```
 _, err := db.Exec("DROP TABLE users")
 if err != nil {
-log.Printf("DatabaseError: %v", err)
+log.Printf("DatabaseError: Permission denied %v", err)
 }
 ```
 
@@ -1003,7 +1003,7 @@ _, err := svc.GetQueueUrl(&sqs.GetQueueUrlInput{
 QueueName: aws.String("my-queue"),
 })
 if err != nil {
-log.Printf("QueueError: %v", err)
+log.Printf("QueueError: Failed to retrieve the URL for queue 'my-queue' %v", err)
 }
 ```
 
@@ -1018,7 +1018,7 @@ log.Printf("ValidationError: Invalid email format: %s", email)
 func main() {
 err := startServer()
 if err != nil {
-log.Fatalf("ServerError: %v", err)
+log.Fatalf("ServerError: Failed to start the server %v", err)
 }
 ```
 
@@ -1038,7 +1038,7 @@ log.Printf("ClientError: Invalid email format received from client: %s", email)
 var err error
 DB, err = database.NewDBConnection()
 if err != nil {
-log.Printf("InternalCommunicationError: %v", err)
+log.Printf("InternalCommunicationError: Couldn't connect to database %v", err)
 }
 ```
 
@@ -1046,13 +1046,13 @@ log.Printf("InternalCommunicationError: %v", err)
 
 ```
 func isValidEmail(email string) bool {
-re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
-return re.MatchString(email)
+regex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+return regex.MatchString(email)
 }
 
 func validateEmail(email string) {
 if !isValidEmail(email) {
-log.Printf(err) <!-- missing error's type-->
+log.Printf(err) // missing error's type
 }
 ```
 
