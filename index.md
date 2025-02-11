@@ -979,12 +979,12 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 ## Logging types
 
-**DatabaseError** - Logs errors related to database transactions, such as connection failures, query timeouts, or integrity violations.
-**QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
-**ValidationError** - HTTP Request and Response validation error
-**ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
-**ClientError** - Frontend Application Error: Logs errors caused by incorrect API requests or missing fields from the client.
-**InternalCommunicationError** - HTTP errors for internal communication between services; logs failures when making HTTP calls between microservices.
+- **DatabaseError** - Logs errors related to database transactions, such as connection failures, query timeouts, or integrity violations.
+- **QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
+- **ValidationError** - HTTP Request and Response validation error
+- **ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
+- **ClientError** - Frontend Application Error: Logs errors caused by incorrect API requests or missing fields from the client.
+- **InternalCommunicationError** - HTTP errors for internal communication between services; logs failures when making HTTP calls between microservices.
 
 **Good Example:**
 
