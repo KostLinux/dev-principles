@@ -986,7 +986,7 @@ Logging errors properly is crucial for debugging, monitoring, and maintaining an
 - **ValidationError** - Any validation error
 - **ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
 - **ClientError** - Frontend Application Error: Errors caused by incorrect API requests or missing fields from the client.
-- **InternalCommunicationError** - Errors related to internal communication between microservices and backend services. This includes failures in HTTP, TCP, and UDP connections, as well as issues communicating with databases, message queues, external APIs, DNS resolution, and other infrastructure components.
+- **InternalCommunicationError** - Indicates issues in communication between microservices or between a microservice and a backend service (e.g., network failures, DNS issues, or database connection problems).
 
 **Good Example:**
 
