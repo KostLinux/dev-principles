@@ -979,7 +979,7 @@ Log levels must be used to categorize log messages based on their severity. The 
 
 ## Logging types
 
-Logging errors properly is crucial for debugging, monitoring, and maintaining an application. By categorizing logs into specific types, we can quickly identify where the issue occurred and what caused it. Below are the key logging types and why they should be used.
+Error types will allow us to standardise and write more self-descriptive logs. We can easily determine on which side of our application we have the issue. Below are the key logging types and why they should be used.
 
 - **DatabaseError** - Logs errors related to database transactions, query timeouts, or integrity violations.
 - **QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
@@ -1052,7 +1052,7 @@ return regex.MatchString(email)
 
 func validateEmail(email string) {
 if !isValidEmail(email) {
-log.Printf(err) // missing error's type
+log.Printf(err)
 }
 ```
 
