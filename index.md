@@ -977,6 +977,85 @@ Log levels must be used to categorize log messages based on their severity. The 
 - **ERROR**: Due to a more serious problem, the software has not been able to perform some function.
 - **FATAL**: A critical error that results in the application being unable to function.
 
+## Logging types
+
+Error types will allow us to standardise and write more self-descriptive logs. We can easily determine on which side of our application we have the issue. Below are the key logging types and why they should be used.
+
+- **DatabaseError** - Logs errors related to database transactions, query timeouts, or integrity violations.
+- **QueueError** - Logs failures in message queues (e.g., SQS, RabbitMQ), such as message processing failures or delivery delays.
+- **ValidationError** - Any validation error
+- **ServerError** - Internal Application Error: Unexpected failures inside the application, such as unhandled panics or logic errors.
+- **ClientError** - Frontend Application Error: Errors caused by incorrect API requests or missing fields from the client.
+- **InternalCommunicationError** - Indicates issues in communication between microservices or between a microservice and a backend service (e.g., network failures, DNS issues, or database connection problems).
+
+**Good Example:**
+
+```
+_, err := db.Exec("DROP TABLE users")
+if err != nil {
+log.Printf("DatabaseError: Permission denied %v", err)
+}
+```
+
+```
+svc := sqs.New(session.Must(session.NewSession()))
+_, err := svc.GetQueueUrl(&sqs.GetQueueUrlInput{
+QueueName: aws.String("my-queue"),
+})
+if err != nil {
+log.Printf("QueueError: Failed to retrieve the URL for queue 'my-queue' %v", err)
+}
+```
+
+```
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf("ValidationError: Invalid email format: %s", email)
+}
+```
+
+```
+func main() {
+err := startServer()
+if err != nil {
+log.Fatalf("ServerError: Failed to start the server %v", err)
+}
+```
+
+```
+func isValidEmail(email string) bool {
+re := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+return re.MatchString(email)
+}
+
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf("ClientError: Invalid email format received from client: %s", email)
+}
+```
+
+```
+var err error
+DB, err = database.NewDBConnection()
+if err != nil {
+log.Printf("InternalCommunicationError: Couldn't connect to database %v", err)
+}
+```
+
+**Bad Example:**
+
+```
+func isValidEmail(email string) bool {
+regex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
+return regex.MatchString(email)
+}
+
+func validateEmail(email string) {
+if !isValidEmail(email) {
+log.Printf(err)
+}
+```
+
 # Conclusion
 
 By following these coding conventions and best practices, we aim to maintain a high standard of code quality, readability, and maintainability across the project. 
