@@ -947,23 +947,21 @@ Added new feature
 Logger Middleware is an important part of the application to log incoming and outgoing requests and responses.
 
 Logger middleware **must** have the following parameters:
-
-- Request method
-- Request uri
-- Request latency till it reaches the outgoing server
-- Request Round-Trip Time (RTT)
-- `X-Request-ID` header which is added to trace the request
-- Response status code
+- **Request method**
+- **Request uri**
+- **Request latency** till it reaches the outgoing server
+- **Request Round-Trip Time (RTT)**
+- **`X-Request-ID`** header which is added to trace the request
+- **Response status code**
 
 These parameters are going under **MUST** category because they are essential for debugging and monitoring the application.
 
 Logger middleware **should** have the following parameters:
-
-- Request body with sanitization of sensitive data
-- Response body with sanitization of sensitive data
-- Request headers
-- Response headers
-- Custom fields like user ID, request ID, etc.
+- **Request body** with sanitization of sensitive data
+- **Response body** with sanitization of sensitive data
+- **Request headers**
+- **Response headers**
+- **Custom fields** like user ID, request ID, etc.
 
 Add a logger middleware to log incoming requests and responses. 
 
