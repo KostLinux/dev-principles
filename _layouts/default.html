@@ -4,9 +4,22 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}" media="screen" type="text/css">
-    <link rel="stylesheet" href="{{ '/assets/css/print.css' | relative_url }}" media="print" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            typography: {
+              DEFAULT: {
+                css: {
+                  maxWidth: '100%',
+                },
+              },
+            },
+          },
+        },
+      }
+    </script>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <![endif]-->
@@ -16,38 +29,49 @@
     {% include head-custom.html %}
   </head>
 
-  <body>
-    <header class="bg-gray-100 py-6">
+  <body class="flex flex-col min-h-screen bg-gray-50">
+    <header class="bg-white shadow-sm py-4 w-full sticky top-0 z-10">
       <div class="container mx-auto px-4 text-center">
         <a href="{{ '/' | absolute_url }}">
-          <h1 class="text-4xl font-bold">{{ site.title | default: site.github.repository_name }}</h1>
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">{{ site.title | default: site.github.repository_name }}</h1>
         </a>
-        <h2 class="text-xl text-gray-600">{{ site.description | default: site.github.project_tagline }}</h2>
+        <h2 class="text-sm sm:text-base md:text-lg text-gray-600 mt-1">{{ site.description | default: site.github.project_tagline }}</h2>
         {% if site.github.is_project_page %}
-          <a href="{{ site.github.repository_url }}" class="mt-4 inline-block bg-red-600 text-white py-2 px-4 rounded">
-            <small>View project on</small> GitHub
-          </a>
-        {% endif %}
-        {% if site.github.is_user_page %}
-          <a href="{{ site.github.owner_url }}" class="mt-4 inline-block bg-red-600 text-white py-2 px-4 rounded">
-            <small>Follow me on</small> GitHub
+          <a href="{{ site.github.repository_url }}" class="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm transition duration-200">
+            <span class="hidden sm:inline">View project on</span> GitHub
           </a>
         {% endif %}
       </div>
     </header>
 
-    <div id="content-wrapper" class="flex">
+    <div class="flex flex-col md:flex-row flex-1">
+      <!-- Mobile menu toggle -->
+      <button id="sidebar-toggle" class="md:hidden mx-auto my-3 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded flex items-center transition duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <span>Table of Contents</span>
+      </button>
+      
       <!-- Sidebar -->
-      <aside id="sidebar" class="w-64 bg-gray-200 p-4 fixed h-full overflow-auto">        <!-- Table of contents will be generated here -->
+      <aside id="sidebar" class="w-full md:w-64 lg:w-72 bg-white p-4 shadow-sm md:h-[calc(100vh-4rem)] md:sticky md:top-16 overflow-y-auto hidden md:block">
+        <!-- Table of contents will be generated here -->
       </aside>
 
       <!-- Main Content -->
-      <section id="main-content" class="flex-1 p-4 ml-64 mt-24">
+      <main id="main-content" class="flex-1 p-4 max-w-none md:pl-6 lg:pl-8 overflow-x-hidden prose prose-slate prose-headings:font-semibold prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100">
         {{ content }}
-      </section>
+      </main>
     </div>
 
-    <!-- Include JavaScript for TOC -->
+    <footer class="bg-white py-4 border-t border-gray-200 mt-8 text-center text-gray-600 text-sm">
+      <div class="container mx-auto px-4">
+        <p>© {{ site.time | date: '%Y' }} {% if site.github.owner_name %}{{ site.github.owner_name }}{% else %}GitHub User{% endif %}</p>
+      </div>
+    </footer>
+
+    <!-- Include JavaScript for TOC and responsive behavior -->
     <script src="{{ '/assets/js/toc.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/responsive.js' | relative_url }}"></script>
   </body>
 </html>

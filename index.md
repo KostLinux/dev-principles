@@ -1017,6 +1017,7 @@ For any questions or suggestions regarding these practices, please reach out to 
 # References
 
 - [Effective Go](https://golang.org/doc/effective_go)
+- [100 Go Mistakes and How to Avoid Them by Teiva Harsanyi](https://www.amazon.com/100-Mistakes-How-Avoid-Them/dp/1617299596)
 - [Learning Go: An Idiomatic Approach to Real-World Go Programming by Jon Bodner](https://www.amazon.com/Learning-Go-Idiomatic-Real-World-Programming/dp/1492077216)
 - [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 - [Semantic Versioning](https://semver.org/)
