@@ -13,7 +13,7 @@ This document outlines the coding conventions and practices for the project, spe
 
 ## Naming Conventions
 
-### Variables and Functions:
+### Variables and Functions
 
 Use `camelCase` for variable.
 
@@ -25,7 +25,7 @@ Use `camelCase` for variable.
 - Omit words that are clear from the surrounding context. For example, in the implementation of a `UserCount` method, a local variable called `userCount` is probably redundant; `count`, `users` are just as readable.
 - Use `camelCase` for function names if they are not exported, and `PascalCase` if they are exported. For example, `getUserByID` is a private function, and `GetUserByID` is a public function. All that is not exported should be added after the // private comment.
 
-### Structs:
+### Structs
 
 Use `PascalCase` for struct names.
 
@@ -81,7 +81,7 @@ func GetUserByID(userID int) {
 
 ---
 
-### Interfaces:
+### Interfaces
 
 - Interfaces should be prefixed with `I` (e.g., `IService`) to indicate it's an interface.
 
@@ -103,7 +103,7 @@ type UserService interface {
 
 ---
 
-### Constants:
+### Constants
 
 Use MixedCaps for constants.
 
@@ -168,20 +168,39 @@ func main() {
     user.GetUserByID(1)
 }
 ```
+### One-letter variable names:
+
+Avoid using one-letter variable names except in cases like loop indices or maths (`i`, `j`, `k`).
+
+**Good Example:**
+
+```go
+func calculateArea(length, width int) int {
+    return length * width
+}
+```
+
+**Bad Example:**
+
+```go
+func calculateArea(l, w int) int {
+    return l * w
+}
+```
 
 ---
 
 ## Code Structure
 
-### File Naming:
+### File Naming
 
 Use descriptive names, and separate words with underscores (e.g., `user.go`, `user_validations.go`).
 
-### Folder Structure:
+### Folder Structure
 
 Organize code into meaningful packages and folders (e.g., `controller/`, `service/`, `repository/`, `model/`, `pkg/`)
 
-### Test Files:
+### Test Files
 
 Name test files with `_test.go` suffix (e.g., `user_test.go`).
 
@@ -241,7 +260,7 @@ project/
 
 ## Formatting
 
-### Newlines:
+### Newlines
 
 Ensure there is a newline after `}` when there is a `return` or new `var` and before `var` or any other line following a closing brace. 
 
@@ -300,7 +319,7 @@ func example() {
 }
 ```
 
-### Commenting:
+### Commenting
 
 Add comments to explain complex logic or non-obvious code.
 
@@ -308,7 +327,7 @@ Add comments to explain complex logic or non-obvious code.
 
 ## Error Handling
 
-### Error return:
+### Error return
 
 Prefer returning errors explicitly instead of using panic.
 
@@ -340,7 +359,7 @@ func getUserByID(userID int) *User {
 
 ---
 
-### Error Messages:
+### Error Messages
 
 Provide meaningful error messages when returning errors.
 
@@ -372,7 +391,7 @@ func getUserByID(userID int) (*User, error) {
 
 ---
 
-### Error shorthand:
+### Error shorthand
 
 Use the `err` shorthand for error variables.
 
@@ -392,32 +411,9 @@ if err != nil {
     return err
 }
 ```
-
 ---
 
-## Miscellaneous
-
-### One-letter variable names:
-
-Avoid using one-letter variable names except in cases like loop indices or maths (`i`, `j`, `k`).
-
-**Good Example:**
-
-```go
-func calculateArea(length, width int) int {
-    return length * width
-}
-```
-
-**Bad Example:**
-
-```go
-func calculateArea(l, w int) int {
-    return l * w
-}
-```
-
-### Enumerations:
+### Enumerations
 
 Enums should be defined within the `model` package with their respective constants.
 
@@ -459,6 +455,127 @@ var Coverages = []string{
 }
 ```
 
+---
+## Variable Shadowing
+
+Try to avoid variable shadowing. If check is needed for the outcome of variable, it's better to either assign a value for the variable or create new variable within the check block.
+
+**Good Example:**
+```go
+func processUser(user User) error {
+    // Outer scope variable
+    id := user.ID
+
+    if user.IsActive {
+        // Update existing variable instead of shadowing
+        // This clearly shows we're intentionally replacing the original ID value
+        id = getUserRoleID(user)
+        log.Printf("Processing active user with role ID: %d", id)
+    }
+
+    // The saveUserActivity function receives the ID that was potentially modified
+    // If user was active, this is now the role ID, otherwise it's the original user ID
+    return saveUserActivity(id)
+}
+```
+
+**Bad Example:**
+```go
+func processUser(user User) error {
+    // Outer scope variable
+    id := user.ID
+    
+    if user.IsActive {
+        // Inner scope shadows outer 'id' variable
+        id := getUserRoleID(user)
+        // Here 'id' refers to the role ID, not the user ID
+        log.Printf("Processing active user with role ID: %d", id)
+        
+        // The outer 'id' is completely inaccessible here
+    }
+    
+    // Here 'id' is the user ID again
+    return saveUserActivity(id)
+}
+```
+---
+## Less `else` statements
+
+Avoid else statements in if condition to avoid the complexity of the code. Use [KISS](https://www.geeksforgeeks.org/kiss-principle-in-software-development/) principle when writing condition checks.
+
+### Simple Example
+
+**Good Example**
+```go
+func GetStatus(user *User) bool {
+    if user.IsActive {
+        return true
+    }
+
+    return false
+}
+```
+
+***Bad Example**
+```go
+func GetStatus(user *User) bool {
+    if user.IsActive {
+        return true
+    } else {
+        return false
+    }
+}
+```
+
+### Complex Example
+
+**Good Example**
+```go
+func join(s1,s2 string, max int) (string, error) {
+    if s1 == "" {
+        return "", errors.New("s1 is empty")
+    }
+
+    if s2 == "" {
+        return "", errors.New("s2 is empty")
+    }
+
+    concat, err := concatenate(s1,s2)
+    if err != nil {
+        return "", err
+    }
+
+    if len(concat) > max {
+        return concat[:max], nil
+    }
+
+    return concat, nil
+}
+```
+
+**Bad Example**
+```go
+func join(s1,s2 string, max int) (string, error) {
+    if s1 == "" {
+        return "", errors.New("s1 is empty")
+    } else {
+        if s2 == "" {
+            return "", errors.New("s2 is empty")
+        } else {
+            concat, err := concatenate(s1, s2)
+            if err != nil {
+                return "", err
+            } else {
+                if len(concat) > max {
+                    return concat[:max], nil
+                } else {
+                    return concat, nil
+                }
+            }
+        }
+    }
+}
+```
 ---
 
 # Software Design
