@@ -13,6 +13,38 @@
               DEFAULT: {
                 css: {
                   maxWidth: '100%',
+                  h1: {
+                    marginTop: '1.5rem',
+                    marginBottom: '1rem',
+                  },
+                  h2: {
+                    marginTop: '1.25rem',
+                    marginBottom: '0.75rem',
+                  },
+                  h3: {
+                    marginTop: '1rem',
+                    marginBottom: '0.5rem',
+                  },
+                  pre: {
+                    backgroundColor: '#1f2937', // darker gray for code blocks
+                    color: '#f3f4f6', // light text for contrast
+                    padding: '1rem',
+                    borderRadius: '0.375rem',
+                  },
+                  ul: {
+                    listStyleType: 'disc',
+                    paddingLeft: '1.5rem',
+                  },
+                  ol: {
+                    listStyleType: 'decimal',
+                    paddingLeft: '1.5rem',
+                  },
+                  'ul > li': {
+                    marginBottom: '0.5rem',
+                  },
+                  'ol > li': {
+                    marginBottom: '0.5rem',
+                  },
                 },
               },
             },
@@ -59,7 +91,7 @@
       </aside>
 
       <!-- Main Content -->
-      <main id="main-content" class="flex-1 p-4 max-w-none md:pl-6 lg:pl-8 overflow-x-hidden prose prose-slate prose-headings:font-semibold prose-code:bg-gray-100 prose-code:p-1 prose-code:rounded prose-pre:bg-gray-100">
+      <main id="main-content" class="flex-1 p-4 md:pl-8 prose prose-slate max-w-none prose-headings:font-semibold prose-pre:bg-gray-800 prose-pre:text-gray-100 prose-code:bg-gray-700 prose-code:text-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none">
         {{ content }}
       </main>
     </div>
