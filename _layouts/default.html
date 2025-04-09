@@ -114,6 +114,41 @@
         color: #2563eb;
         text-decoration: underline;
       }
+
+      /* Mobile menu styles */
+      .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 40;
+        display: none;
+      }
+      
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 300px;
+        height: 100%;
+        background-color: white;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      }
+      
+      .mobile-menu.open {
+        transform: translateX(0);
+      }
+      
+      .mobile-menu-open {
+        overflow: hidden;
+      }
     </style>
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -126,21 +161,54 @@
 
   <body class="flex flex-col min-h-screen bg-gray-50">
     <header class="bg-white shadow-sm py-4 w-full sticky top-0 z-10">
-      <div class="container mx-auto px-4 text-center">
-        <a href="{{ '/' | absolute_url }}">
-          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">{{ site.title | default: site.github.repository_name }}</h1>
-        </a>
-        <h2 class="text-sm sm:text-base md:text-lg text-gray-600 mt-1">{{ site.description | default: site.github.project_tagline }}</h2>
-        {% if site.github.is_project_page %}
-          <a href="{{ site.github.repository_url }}" class="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm transition duration-200">
+      <div class="container mx-auto px-4 flex items-center justify-between">
+        <!-- Hamburger menu icon for mobile -->
+        <button id="hamburger-menu" class="md:hidden text-gray-800 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        
+        <div class="text-center flex-1">
+          <a href="{{ '/' | absolute_url }}">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800">{{ site.title | default: site.github.repository_name }}</h1>
+          </a>
+          <h2 class="text-sm sm:text-base md:text-lg text-gray-600 mt-1">{{ site.description | default: site.github.project_tagline }}</h2>
+        </div>
+        
+        <!-- Empty div to balance the flex layout -->
+        <div class="md:block hidden w-6"></div>
+      </div>
+      
+      {% if site.github.is_project_page %}
+        <div class="text-center mt-2">
+          <a href="{{ site.github.repository_url }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm transition duration-200">
             <span class="hidden sm:inline">View project on</span> GitHub
           </a>
-        {% endif %}
-      </div>
+        </div>
+      {% endif %}
     </header>
 
+    <!-- Mobile menu overlay -->
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay"></div>
+    
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="mobile-menu p-4">
+      <div class="flex justify-between items-center mb-4 border-b pb-4">
+        <h2 class="text-xl font-bold text-gray-800">Menu</h2>
+        <button id="close-mobile-menu" class="text-gray-800 focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-menu-content">
+        <!-- Mobile menu content will be populated with JS -->
+      </div>
+    </div>
+
     <div class="flex flex-col md:flex-row flex-1">
-      <!-- Mobile menu toggle -->
+      <!-- Sidebar toggle button (now only for tablet sizes) -->
       <button id="sidebar-toggle" class="md:hidden mx-auto my-3 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded flex items-center transition duration-200">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
