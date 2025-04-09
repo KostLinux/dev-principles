@@ -206,11 +206,6 @@ Name test files with `_test.go` suffix (e.g., `user_test.go`).
 
 **Good Example:**
 
-```go
-package user
-package uservalidations
-```
-
 ```
 project/
     ├── controller/
@@ -228,13 +223,6 @@ project/
     |── model/
     |   ├── user.go
     └── main.go
-```
-
-**Bad Example:**
-
-```go
-package User
-package user_validations
 ```
 
 ```
