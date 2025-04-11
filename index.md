@@ -444,6 +444,8 @@ var Coverages = []string{
 ```
 
 ---
+# Code Quality
+
 ## Variable Shadowing
 
 Try to avoid variable shadowing. If check is needed for the outcome of variable, it's better to either assign a value for the variable or create new variable within the check block.
