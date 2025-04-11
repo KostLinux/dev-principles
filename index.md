@@ -564,6 +564,178 @@ func join(s1,s2 string, max int) (string, error) {
     }
 }
 ```
+
+## Getters & Setters
+
+Even though in Golang Getters and Setters are not a common practice, they are used in some cases.
+
+Getters never use `Get` prefix due to:
+
+- It's more concise and idiomatic to Go's philosophy
+- Rob Pike (Go's creator) has stated this is the preferred style
+- It follows the principle of least surprise in Go
+
+While Setters use `Set` prefix due to:
+
+- We need to distinguish them from getters
+- The action of setting needs to be explicit
+- It makes it clear the method modifies state
+
+**Good Example**
+```go
+package model
+
+type User struct {
+    name    string
+    address string
+}
+
+// Getter - no "Get" prefix
+func (u *User) Name() string {
+    return u.name
+}
+
+func (u *User) Address() string {
+    return u.address
+}
+
+// Setter - uses "Set" prefix
+func (u *User) SetName(name string) {
+    u.name = name
+}
+
+func (u *User) SetAddress(address string) {
+    u.address = address
+}
+
+```
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/username/project/model"
+)
+
+func main() {
+    user := &model.User{}
+    user.SetName("Alice")
+    fmt.Println(user.Name())
+    fmt.Println(user.Address())
+}
+```
+
+**Bad Example**
+```go
+package model
+
+type Customer struct {
+    Name    string
+    Address string
+}
+
+// Bad: Using "Get" prefix for getters
+func (c *Customer) GetName() string {
+    return c.Name
+}
+
+func (c *Customer) GetAddress() string {
+    return c.Address
+}
+
+// Bad: Inconsistent naming
+func (c *Customer) UpdateName(name string) {
+    c.Name = name
+}
+
+func (c *Customer) ChangeAddress(address string) { 
+    c.Address = address
+}
+```
+```go
+func main() {
+    customer := &Customer{}
+    customer.UpdateName("Bob")
+    fmt.Println(customer.GetName())
+    fmt.Println(customer.GetAddress())
+}
+```
+
+## Interface Pollution
+
+Interface pollution occurs when an interface has too many methods or is too broad, making it difficult to implement and understand. This can lead to confusion and make it harder to maintain the codebase.
+
+The good example follows the Interface Segregation Principle by:
+- Creating small, focused interfaces
+- Allowing composition when needed
+- Making implementations simpler and more maintainable
+
+
+The bad example shows interface pollution by:
+- Combining too many methods into one interface
+- Forcing implementations to provide unnecessary methods
+- Making the codebase harder to maintain and test
+
+**Good Example:**
+```go
+// Small, focused interfaces that are easy to implement
+type Reader interface {
+    Read(p []byte) (n int, err error)
+}
+
+type Writer interface {
+    Write(p []byte) (n int, err error)
+}
+
+// Compose interfaces when needed
+type ReadWriter interface {
+    Reader
+    Writer
+}
+
+// Implementation only needs to implement what it uses
+type FileHandler struct{}
+
+func (f *FileHandler) Read(p []byte) (n int, err error) {
+    // Read implementation
+    return len(p), nil
+}
+```
+
+**Bad Example:**
+```go
+// Interface pollution - too many methods in one interface
+type FileSystem interface {
+    Read(p []byte) (n int, err error)
+    Write(p []byte) (n int, err error)
+    Create(name string) error
+    Delete(name string) error
+    Rename(oldpath, newpath string) error
+    Chmod(mode os.FileMode) error
+    Chown(uid, gid int) error
+    Stat() (os.FileInfo, error)
+    Close() error
+}
+
+// Implementation forced to implement all methods
+type SimpleFileHandler struct{}
+
+func (f *SimpleFileHandler) Read(p []byte) (n int, err error) {
+    return len(p), nil
+}
+
+// Must implement all other methods even if not needed
+func (f *SimpleFileHandler) Write(p []byte) (n int, err error) {
+    return 0, errors.New("not implemented")
+}
+
+func (f *SimpleFileHandler) Create(name string) error {
+    return errors.New("not implemented")
+}
+
+// ... and so on for all other methods
+```
+
 ---
 
 # Software Design
