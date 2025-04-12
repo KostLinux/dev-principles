@@ -738,6 +738,74 @@ func (f *SimpleFileHandler) Create(name string) error {
 // ... and so on for all other methods
 ```
 
+## Generics
+
+In Golang generics were created to allow developers to write more flexible and reusable code. However, they can also lead to complexity and confusion if not used properly.
+To avoid this, it's important to use generics judiciously and only when necessary.
+
+Keep KISS principle in mind when using generics. If a function or type can be implemented without generics, it's often better to do so. This keeps the code simpler and easier to understand.
+
+**Good Example:**
+```go
+// Custom constraint
+type number interface {
+    // Either int or float64 can be used
+    int | float64
+}
+
+// Generic function that works with any type that satisfies the Number constraint
+func universalAdd[T number](a, b T) T {
+    return a + b
+}
+
+func main() {
+    // Works
+    fmt.Println(universalAdd[int](1, 2))
+    fmt.Println(universalAdd[float64](1.5, 2.3))
+
+    // Will not compile and will give error
+    fmt.Println(universalAdd[string]("Hello", "World"))
+}
+```
+
+**Bad Example:**
+```go
+func universalAdd[T any](a, b T) string {
+    // Convert everything to string and concatenate, then try to parse back
+    aStr := fmt.Sprintf("%v", a)
+    bStr := fmt.Sprintf("%v", b)
+    
+    // Try to handle different types with type assertions and string parsing
+    if aInt, err1 := strconv.Atoi(aStr); err1 == nil {
+        if bInt, err2 := strconv.Atoi(bStr); err2 == nil {
+            return fmt.Sprintf("%v", aInt + bInt)
+        }
+    }
+    
+    if aFloat, err1 := strconv.ParseFloat(aStr, 64); err1 == nil {
+        if bFloat, err2 := strconv.ParseFloat(bStr, 64); err2 == nil {
+            return fmt.Sprintf("%v", aFloat + bFloat)
+        }
+    }
+    
+    // Fall back to string concatenation for everything else
+    return aStr + bStr
+}
+
+func main() {
+    // Works but inefficient and error-prone
+    fmt.Println(universalAdd(1, 2))        // "3"
+    fmt.Println(universalAdd(1.5, 2.3))    // "3.8"
+    
+    // Leads to unexpected results with string concatenation
+    fmt.Println(universalAdd("Hello", "World"))  // "HelloWorld"
+    
+    // And completely breaks type safety
+    fmt.Println(universalAdd(true, false))  // "truefalse"
+    fmt.Println(universalAdd([]int{1}, []int{2}))  // "[1][2]" or runtime error
+}
+```
+
 ---
 
 # Software Design
