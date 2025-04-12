@@ -806,9 +806,103 @@ func main() {
 }
 ```
 
+## Embed Types
+
+Go's struct embedding allows one struct to include another struct's fields and methods directly, enabling composition over inheritance. When used correctly, embedding creates cleaner code with better encapsulation.
+
+**Good Example:**
+```go
+// Base types with focused responsibilities
+type logger struct{}
+
+func (l logger) Log(message string) {
+    fmt.Println("LOG:", message)
+}
+
+type authenticator struct{}
+
+func (a authenticator) Authenticate(token string) bool {
+    // Authentication logic
+    return token != ""
+}
+
+// UserService composes functionality through embedding
+type userService struct {
+    // Embedded types
+    logger
+    authenticator
+    
+    // Service-specific fields
+    users []user
+}
+
+func (s *userService) CreateUser(name string, token string) error {
+    // Uses embedded Authenticator's method
+    if !s.Authenticate(token) {
+        // Uses embedded Logger's method
+        s.Log("Authentication failed")
+        return errors.New("unauthorized")
+    }
+    
+    // Service-specific logic
+    s.users = append(s.users, user{Name: name})
+    s.Log("User created")
+    return nil
+}
+```
+
+**Bad Example:**
+```go
+// Overloaded type containing too many concerns
+type userManager struct {
+    users []user
+}
+
+// Adding logging functionality through embedding but with name conflicts
+type loggingUserManager struct {
+    userManager
+    logger
+    
+    // Duplicate field that shadows the embedded one
+    users map[string]user
+}
+
+func (l *loggingUserManager) CreateUser(name string) {
+    // Ambiguous - which users collection are we using?
+    user := user{Name: name}
+    
+    // Awkward workaround for field collision
+    l.UserManager.users = append(l.UserManager.users, user)
+    l.users[name] = user // Using the shadowed field
+    
+    // Method name collision if Logger also has a CreateUser method
+    // Would need explicit qualification: l.Logger.CreateUser()
+}
+
+// Multiple layers of embedding make it unclear where methods come from
+type adminManager struct {
+    loggingUserManager
+    authService
+    configManager
+    // More embedded types...
+}
+
+func (a *adminManager) DoSomething() {
+    // Where is each method coming from? Hard to tell at a glance
+    a.Log("Starting operation")
+    a.Authenticate()
+    a.LoadConfig()
+    a.CreateUser("admin")
+}
+```
+
+
 ---
 
 # Software Design
+
+There are many software design principles available (e.g Builder, Factory, Singleton).
+Kindly use [this website](https://refactoring.guru/design-patterns/catalog) to check all the patterns and find the one that fits your needs.
 
 ## SOLID
 
