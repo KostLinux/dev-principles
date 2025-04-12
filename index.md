@@ -401,7 +401,7 @@ if err != nil {
 ```
 ---
 
-### Enumerations
+## Enumerations
 
 Enums should be defined within the `model` package with their respective constants.
 
@@ -444,7 +444,57 @@ var Coverages = []string{
 ```
 
 ---
-# Code Quality
+# Common Code Smells
+
+## Type `any`
+
+Avoid using `any` or empty interfaces as a type, unless it's absolutely necessary. `any` types can be used in case of formatting or marshalling, but should be avoided in other cases.
+
+In bad example we can see, that the type safety which is propagated by Go is lost. The function can accept any type, and the code inside the function must use type assertions to determine the actual type of the argument.
+
+**Good Example:**
+```go
+func encodeToJSON(data any) ([]byte, error) {
+    return json.Marshal(data)
+}
+
+type User struct {
+    ID   int    `json:"id"`
+    Name string `json:"name"`
+}
+
+func main() {
+    user := User{ID: 1, Name: "John"}
+    jsonData, err := encodeToJSON(user)
+    if err != nil {
+        log.Fatalf("Failed to encode: %v", err)
+    }
+    fmt.Println(string(jsonData))
+}
+```
+
+**Bad Example:**
+```go
+func processData(data any) {
+    // Process data with type assertions
+    switch v := data.(type) {
+    case string:
+        fmt.Println("String:", v)
+    case int:
+        fmt.Println("Int:", v)
+    default:
+        fmt.Println("Unknown type")
+    }
+}
+
+func main() {
+    processData("hello")
+    processData(42)
+    processData(true)
+}
+```
+
+
 
 ## Variable Shadowing
 
@@ -663,7 +713,74 @@ func main() {
 }
 ```
 
-## Interface Pollution
+## Interfaces
+
+## Interfaces must be on consumers side
+
+Interfaces should use the consumer side of the code. This means that the interface should be defined in the package where it is needed to use, not in the package where it is implemented. There are some exceptions, but in those exceptions developer MUST be sure, that it will be needed for other packages (ex: `context.Context` interface from context package)
+
+**Good Example:**
+```go
+package service
+
+import "github.com/username/project/model"
+
+// UserRepository interface is defined in the consumer package
+type UserRepository interface {
+    FindByID(id int) (*model.User, error)
+    Create(user *model.User) error
+    Update(user *model.User) error
+}
+
+// UserService depends on the interface, not the concrete implementation
+type UserService struct {
+    repo UserRepository
+}
+
+func NewUserService(repo UserRepository) *UserService {
+    return &UserService{repo: repo}
+}
+
+func (s *UserService) GetUserByID(id int) (*model.User, error) {
+    return s.repo.FindByID(id)
+}
+```
+
+**Bad Example:**
+```go
+// In provider package (e.g., repository/user_repository.go)
+package repository
+
+import "github.com/username/project/model"
+
+// Interface defined in the provider package - bad practice
+type UserRepository interface {
+    FindByID(id int) (*model.User, error)
+    Create(user *model.User) error
+    Update(user *model.User) error
+}
+
+// Implementation in the same package as the interface
+type PostgresUserRepository struct {
+    db *sql.DB
+}
+
+func (r *PostgresUserRepository) FindByID(id int) (*model.User, error) {
+    // Implementation
+    return &model.User{}, nil
+}
+
+// In service/user_service.go - now dependent on repository package for the interface
+package service
+
+import "github.com/username/project/repository"
+
+type UserService struct {
+    repo repository.UserRepository
+}
+```
+
+### Pollution
 
 Interface pollution occurs when an interface has too many methods or is too broad, making it difficult to implement and understand. This can lead to confusion and make it harder to maintain the codebase.
 
